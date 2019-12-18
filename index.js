@@ -66,8 +66,9 @@ app.put('/:todos/:id', bodyParser.json(), function (req, res) {
 
 app.post('/:todos/', bodyParser.json(), function(req,res){
   var todos = req.params.todos;
-  var id = 0, todo;
+  var id = 0;
   fs.readdir(todos, (err, files) => {
+    var todo;
     id = files.length + 1;
     // while(id === )
     todo = req.body;
@@ -75,18 +76,49 @@ app.post('/:todos/', bodyParser.json(), function(req,res){
     todo.userId = req.body.userId ? req.body.userId : todo.userId;
     todo.title = req.body.title ? req.body.title : todo.title;
     todo.completed = req.body.completed ? req.body.userId : todo.completed;
-    console.log(id);
     var fp = todos + "/" + todos + id + '.json';
-    console.log(fp);
     fs.open(fp , "w" , () => {});
     // console.log("debug")
     saveTodo(id, todos, todo);
     res.json(todo);
   });
 })
+// app.post('/:todos', bodyParser.json(), (req,res)=>{
+//   var todos = req.params.body;
+//   var id;
+//   var todo;
+//   fs.readdir(todos, (err, files) => {
+//     id += files.length;
+//     todo = req.body;
+//     todo.id = id;
+//     todo.userId = 
+//   })
+
+
+// })
+// app.post('/:todos/', (req,res) => {
+//   var todo = req.body;
+//   var id ;
+//   fs.readdir(todos, (err, files) => {
+//     var todo;
+//     id = files.length + 1;
+//   })
+//   todos.push(todo);
+//   const jsonstring = JSON.stringify(todos)
+//   fs.writeFile('./todos' + id + '.json', jsonstring, err=>{
+//       if(err){
+//           console.log("ERROR")
+//       }
+//       else{
+//           console.log("SUCCESS")
+//       }
+//   })
+//   //console.log(todos[newtodo.id]);
+//   res.send("Post successful:\n"+JSON.stringify(newtodo, null, 4));
+// })
 
 app.delete('/:todos/:id', function (req, res) {
-  var fp = getTodosFilePath(req.params.id, re.params.todos)
+  var fp = getTodosFilePath(req.params.id, req.params.todos)
   fs.unlinkSync(fp) // delete the file
   res.sendStatus(200)
 })
