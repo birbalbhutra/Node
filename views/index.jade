@@ -1,0 +1,10 @@
+doctype html
+html(lang="en")
+  head
+    title= "User Id"
+  body
+    h1 Jade!
+    ul
+      each todo in todos
+        li
+          a(href='/' + todo.userId)= user.id

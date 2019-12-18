@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Id</title>
+</head>
+<body>
+
+  <h1>HTML/EJS</h1>
+  <ul>
+    <% for(var i=0; i<todos.length; i++) {%>
+       <li><a href="/<%= todos[i].userId %>"><%= todos[i].id %></a></li>
+    <% } %>
+  </ul>
+  
+</body>
+</html>
