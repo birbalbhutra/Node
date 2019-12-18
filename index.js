@@ -95,27 +95,6 @@ app.post('/:todos/', bodyParser.json(), function(req,res){
 //   })
 
 
-// })
-// app.post('/:todos/', (req,res) => {
-//   var todo = req.body;
-//   var id ;
-//   fs.readdir(todos, (err, files) => {
-//     var todo;
-//     id = files.length + 1;
-//   })
-//   todos.push(todo);
-//   const jsonstring = JSON.stringify(todos)
-//   fs.writeFile('./todos' + id + '.json', jsonstring, err=>{
-//       if(err){
-//           console.log("ERROR")
-//       }
-//       else{
-//           console.log("SUCCESS")
-//       }
-//   })
-//   //console.log(todos[newtodo.id]);
-//   res.send("Post successful:\n"+JSON.stringify(newtodo, null, 4));
-// })
 
 app.delete('/:todos/:id', function (req, res) {
   var fp = getTodosFilePath(req.params.id, req.params.todos)
