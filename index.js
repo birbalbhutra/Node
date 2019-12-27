@@ -1,3 +1,4 @@
+require('dotenv').config()
 var express = require('express')
 var app = express()
 
@@ -10,6 +11,23 @@ var cors = require('cors')
 var bodyParser = require('body-parser')
 const Todo = require('./dbtest.js').Todo;
 app.use(cors());
+
+const jwt = require('jsonwebtoken')
+const User = require('./dbtest.js').User;
+
+
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+  if (token == null) return res.sendStatus(401)
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    console.log(err)
+    if (err) return res.sendStatus(403)
+    req.user = user
+    next()
+  })
+}
 
 // function getTodosFilePath (id, todos) {
 //   return path.join(__dirname, todos, todos + id) + '.json';
@@ -34,6 +52,34 @@ app.use(cors());
 // app.get('/',(req, res)=>{
 //   res.json(todos);
 // })
+
+app.get('/verifyUser/:userId/:password' , (req , res) => {
+  let userId = req.params.userId;
+  let password = req.params.password;
+  console.log(req.params);
+  
+  User.findOne({userId: userId} , (error , user) => {
+    if(user != null)
+    {
+      if(password === user.password){
+        let token = jwt.sign({ userId : userId }, process.env.ACCESS_TOKEN_SECRET);
+        res.json({token: token});
+      }
+      else{
+        res.sendStatus(404);
+      }
+    }
+    else
+    {
+      res.sendStatus(403);
+    }
+  })
+})
+
+// app.get('/createUser/', (req,res) => {
+
+// })
+
 app.get('/todos', function (req, res) {
     Todo.find({} , (error , todos) => {
       res.json(todos);
@@ -50,6 +96,12 @@ app.get('/todos', function (req, res) {
   //     })
   //   })
   // })
+})
+
+app.get('/user', function(req,res)  {
+  User.find({}, (error, users) => {
+    res.json(users);
+  })
 })
 
 app.get('/todos/:id', function (req, res) {
@@ -86,17 +138,19 @@ app.put('/todos/:id', bodyParser.json(), function (req, res) {
 app.post('/todos/', bodyParser.json(), function(req,res){
   var todos = req.params.todos;
   Todo.find({} , (error , todos) => {
-    let id = todos.reduce((max , curr) => {
-      max = curr.id > max ? curr.id : max;
-      return max;
+    let id = todos.reduce((agg , current) => {
+      if(agg < current.id){
+        agg = current.id;
+      }
+      return agg;
     } , todos[0].id);
     data = {"userId": 0, "id": id, "title": "", "completed": false};
     Object.assign(data , req.body);
     data.id = id + 1;
     // console.log(data);
-    Todo.create(data , (error , new_todo) => {
-      console.log(new_todo);
-      res.json(new_todo);
+    Todo.create(data , (error , newTodo) => {
+      console.log(newTodo);
+      res.json(newTodo);
     })
   })
   // var todos = req.params.todos;
@@ -158,6 +212,5 @@ app.post('/todos/', bodyParser.json(), function(req,res){
 var server = app.listen(3000, function () {
   console.log('Server running at http://localhost:' + server.address().port)
 })
-
 
 

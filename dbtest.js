@@ -18,3 +18,10 @@ var todoSchema = mongoose.Schema({
 });
 
 exports.Todo = mongoose.model('Todo', todoSchema);
+
+var userSchema = mongoose.Schema({
+  userId : Number,
+  password: String
+});
+
+exports.User = mongoose.model('User', userSchema);
